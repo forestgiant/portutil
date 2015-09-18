@@ -6,8 +6,8 @@ import (
 )
 
 func Verify(port int) (verifiedPort int, err error) {
-	address := JoinHostPort("127.0.0.1", port)
-	ln, err := net.Listen("tcp", address)
+	addr := JoinHostPort("127.0.0.1", port)
+	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return 0, err
 	}
@@ -16,8 +16,33 @@ func Verify(port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
-func VerifyHostPort(address string) (verifiedAddress string, err error) {
-	port, err := GetPortFromAddr(address)
+func VerifyByNet(netProto string, port int) (verifiedPort int, err error) {
+
+	switch netProto {
+	case "udp":
+		addr := JoinHostPort("127.0.0.1", port)
+		udpAddr, err := net.ResolveUDPAddr("udp", addr)
+		if err != nil {
+			return 0, err
+		}
+
+		ln, err := net.ListenUDP("udp", udpAddr)
+		if err != nil {
+			return 0, err
+		}
+		defer ln.Close()
+	case "tcp":
+		_, err = Verify(port)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return port, nil
+}
+
+func VerifyHostPort(addr string) (verifiedAddr string, err error) {
+	port, err := GetPortFromAddr(addr)
 	if err != nil {
 		return "", err
 	}
@@ -27,7 +52,7 @@ func VerifyHostPort(address string) (verifiedAddress string, err error) {
 		return "", err
 	}
 
-	return address, nil
+	return addr, nil
 }
 
 func GetUnique() (port int, err error) {
@@ -45,8 +70,8 @@ func GetUnique() (port int, err error) {
 	return port, nil
 }
 
-func GetPortFromAddr(address string) (port int, err error) {
-	_, portStr, err := net.SplitHostPort(address)
+func GetPortFromAddr(addr string) (port int, err error) {
+	_, portStr, err := net.SplitHostPort(addr)
 	if err != nil {
 		return 0, err
 	}
