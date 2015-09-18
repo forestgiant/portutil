@@ -5,6 +5,8 @@ import (
 	"strconv"
 )
 
+// Verifies if a port is avabilable
+// TCP only
 func Verify(port int) (verifiedPort int, err error) {
 	addr := JoinHostPort("127.0.0.1", port)
 	ln, err := net.Listen("tcp", addr)
@@ -16,8 +18,8 @@ func Verify(port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
+// Verifies if a port is avabilable on "udp" or "tcp"
 func VerifyByNet(netProto string, port int) (verifiedPort int, err error) {
-
 	switch netProto {
 	case "udp":
 		addr := JoinHostPort("127.0.0.1", port)
@@ -41,6 +43,7 @@ func VerifyByNet(netProto string, port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
+// Wrapper function for Verify to easily accept address string
 func VerifyHostPort(addr string) (verifiedAddr string, err error) {
 	port, err := GetPortFromAddr(addr)
 	if err != nil {
@@ -55,6 +58,8 @@ func VerifyHostPort(addr string) (verifiedAddr string, err error) {
 	return addr, nil
 }
 
+// Get a unique port
+// TCP Only
 func GetUnique() (port int, err error) {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -70,6 +75,7 @@ func GetUnique() (port int, err error) {
 	return port, nil
 }
 
+// Helper function to quickly get the port from an addr string
 func GetPortFromAddr(addr string) (port int, err error) {
 	_, portStr, err := net.SplitHostPort(addr)
 	if err != nil {
@@ -84,6 +90,8 @@ func GetPortFromAddr(addr string) (port int, err error) {
 	return port, nil
 }
 
+// Wrapper function for net.JoinHostPort to easily
+// pass port as an int instead of a string
 func JoinHostPort(host string, port int) string {
 	return net.JoinHostPort(host, strconv.Itoa(port))
 }
