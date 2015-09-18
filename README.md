@@ -1,11 +1,22 @@
 ## PortUtil
-Quickly verify if a port is available. 
-This is useful if your microservice architecture requires a service to always be on the same port.
+Quickly verify if a port is available or get a unique port (TCP/UDP).
 
 ## Usage
-Verify Port (TCP Only)
+### Verify, VerifyTCP, VerifyUDP:
 ```
-port, err := portutil.Verify(8080)
+port, err := portutil.Verify("tcp", 8080)
+if err != nil {
+	log.Fatal(err)
+}
+```
+```
+port, err := portutil.VerifyUDP(8080)
+if err != nil {
+	log.Fatal(err)
+}
+```
+```
+port, err := portutil.VerifyTCP(8080)
 if err != nil {
 	log.Fatal(err)
 }
@@ -13,23 +24,27 @@ if err != nil {
 
 Verify Port from a HostPort string (TCP Only)
 ```
-serviceHost, err := portutil.VerifyHostPort("127.0.0.1:8080")
+serviceHost, err := portutil.VerifyHostPortTCP("127.0.0.1:8080")
 if err != nil {
 	log.Fatal(err)
 }
 ```
 
-Get a unique port (TCP Only)
+### GetUnique, GetUniqueTCP, GetUniqueUDP:
 ```
-port, err := portutil.GetUnique()
+port, err := portutil.GetUnique("tcp")
 if err != nil {
 	log.Fatal(err)
 }
 ```
-
-Verify Port by Network Protocol. "udp" or "tcp"
 ```
-port, err := portutil.VerifyByNet("udp", 8053)
+port, err := portutil.GetUniqueTCP
+if err != nil {
+	log.Fatal(err)
+}
+```
+```
+port, err := portutil.GetUniqueUDP
 if err != nil {
 	log.Fatal(err)
 }
