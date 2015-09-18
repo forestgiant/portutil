@@ -4,8 +4,8 @@ This is useful if your microservice architecture requires a service to always be
 
 ## Typical Usage
 ```
-    port, err := portutil.Verify(8080)
-	if err != nil {
-		log.Fatal(err)
-	}
+port, err := portutil.Verify(8080)
+if err != nil {
+	log.Fatal(err)
+}
 ```
