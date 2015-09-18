@@ -18,3 +18,11 @@ if err != nil {
 	log.Fatal(err)
 }
 ```
+
+Get a unique port
+```
+port, err := portutil.GetUnique()
+if err != nil {
+	log.Fatal(err)
+}
+```
