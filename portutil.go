@@ -30,14 +30,19 @@ func VerifyHostPort(address string) (verifiedAddress string, err error) {
 	return address, nil
 }
 
-func Unique(address string) (uniqueAdress string, err error) {
-	ln, err := net.Listen("tcp", address)
+func GetUnique() (port int, err error) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
-		return address, err
+		return 0, err
 	}
 	defer ln.Close()
 
-	return address, nil
+	port, err = GetPortFromAddr(ln.Addr().String())
+	if err != nil {
+		return 0, err
+	}
+
+	return port, nil
 }
 
 func GetPortFromAddr(address string) (port int, err error) {
