@@ -58,6 +58,7 @@ func TestVerify(t *testing.T) {
 		port, err := Verify(test.netProto, testPort)
 		if err != nil {
 			t.Errorf("Couldn't Verify port on UDP: %s. Error: %s", port, err)
+			return
 		}
 
 		if port == 0 {
@@ -77,6 +78,7 @@ func TestVerifyHostPortTCP(t *testing.T) {
 	addr, err := VerifyHostPortTCP(testAddr)
 	if err != nil {
 		t.Errorf("Couldn't VerifyHostPort: %s. Error: %s", addr, err)
+		return
 	}
 
 	if addr == "" {
@@ -120,7 +122,7 @@ func TestGetUnique(t *testing.T) {
 	}
 }
 
-// This test create a listener at a port and then calls Verify()
+// This test creates a listener at a port and then calls Verify()
 func TestPortTaken(t *testing.T) {
 	tests := []struct {
 		netProto string
