@@ -1,7 +1,16 @@
 ## PortUtil
 Quickly verify if a port is available or get a unique port (TCP/UDP).
 
-## Usage
+## Installation
+`go get -u github.com/forestgiant/portutil`
+
+or vendor with [gv](https://github.com/forestgiant/gv/)
+`gv get github.com/forestgiant/portutil`
+
+## Docs
+http://godoc.org/github.com/forestgiant/portutil
+
+## Examples
 ### Verify, VerifyTCP, VerifyUDP:
 ```
 port, err := portutil.Verify("tcp", 8080)
