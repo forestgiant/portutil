@@ -51,13 +51,13 @@ func Verify(netProto string, port int) (verifiedPort int, err error) {
 }
 
 // Wrapper function for VerifyTCP to easily accept address string
-func VerifyHostPortTCP(addr string) (verifiedAddr string, err error) {
+func VerifyHostPort(netProto string, addr string) (verifiedAddr string, err error) {
 	port, err := GetPortFromAddr(addr)
 	if err != nil {
 		return "", err
 	}
 
-	_, err = VerifyTCP(port)
+	_, err = Verify(netProto, port)
 	if err != nil {
 		return "", err
 	}

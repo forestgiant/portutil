@@ -73,24 +73,31 @@ func TestVerify(t *testing.T) {
 	}
 }
 
-func TestVerifyHostPortTCP(t *testing.T) {
+func TestVerifyHostPort(t *testing.T) {
 	testAddr := "127.0.0.1:9080"
-	addr, err := VerifyHostPortTCP(testAddr)
-	if err != nil {
-		t.Errorf("Couldn't VerifyHostPort: %s. Error: %s", addr, err)
-		return
+	tests := []struct {
+		netProto string
+	}{
+		{udp},
+		{tcp},
 	}
+	for _, test := range tests {
+		addr, err := VerifyHostPort(test.netProto, testAddr)
+		if err != nil {
+			t.Errorf("Couldn't VerifyHostPort: %s. Error: %s", addr, err)
+			return
+		}
 
-	if addr == "" {
-		t.Errorf("Couldn't VerifyHostPort: %s. Error: %s", addr, err)
-		return
+		if addr == "" {
+			t.Errorf("Couldn't VerifyHostPort: %s. Error: %s", addr, err)
+			return
+		}
+
+		if addr != testAddr {
+			t.Errorf("testPort: %d should equal port: %d", testAddr, addr)
+			return
+		}
 	}
-
-	if addr != testAddr {
-		t.Errorf("testPort: %d should equal port: %d", testAddr, addr)
-		return
-	}
-
 }
 
 func TestGetUniqueTCP(t *testing.T) {
@@ -157,6 +164,11 @@ func TestPortTaken(t *testing.T) {
 
 		// Now try to use the same port
 		_, err = Verify(test.netProto, port)
+		if err == nil {
+			t.Errorf("Failed to detect port was taken.")
+		}
+
+		_, err = VerifyHostPort(test.netProto, JoinHostPort("127.0.0.1", port))
 		if err == nil {
 			t.Errorf("Failed to detect port was taken.")
 		}
