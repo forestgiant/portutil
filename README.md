@@ -31,9 +31,9 @@ if err != nil {
 }
 ```
 
-Verify Port from a HostPort string (TCP Only)
+Verify Port from a HostPort string
 ```
-serviceHost, err := portutil.VerifyHostPortTCP("127.0.0.1:8080")
+serviceHost, err := portutil.VerifyHostPort("tcp", "127.0.0.1:8080")
 if err != nil {
 	log.Fatal(err)
 }
