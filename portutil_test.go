@@ -82,6 +82,7 @@ func TestVerifyHostPort(t *testing.T) {
 	}{
 		{udp, "127.0.0.1:9080", true},
 		{tcp, "127.0.0.1:9080", true},
+		{tcp, ":9080", true},
 		{udp, "", false},
 		{tcp, "", false},
 	}
