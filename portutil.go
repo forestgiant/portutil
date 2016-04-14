@@ -10,7 +10,7 @@ const (
 	udp = "udp"
 )
 
-// Verifies if a port is available on TCP
+// VerifyTCP verifies if a port is available on TCP
 func VerifyTCP(port int) (verifiedPort int, err error) {
 	ln, err := newListenerTCP(port)
 	if err != nil {
@@ -21,7 +21,7 @@ func VerifyTCP(port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
-// Verifies if a port is available on UDP
+// VerifyUDP verifies if a port is available on UDP
 func VerifyUDP(port int) (verifiedPort int, err error) {
 	ln, err := newListenerUDP(port)
 	if err != nil {
@@ -32,7 +32,7 @@ func VerifyUDP(port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
-// Verifies if a port is available on "udp" or "tcp"
+// Verify verifies if a port is available on "udp" or "tcp"
 func Verify(netProto string, port int) (verifiedPort int, err error) {
 	switch netProto {
 	case udp:
@@ -50,7 +50,7 @@ func Verify(netProto string, port int) (verifiedPort int, err error) {
 	return port, nil
 }
 
-// Wrapper function for VerifyTCP to easily accept address string
+// VerifyHostPort is a wrapper function for VerifyTCP to easily accept address string
 func VerifyHostPort(netProto string, addr string) (verifiedAddr string, err error) {
 	port, err := GetPortFromAddr(addr)
 	if err != nil {
@@ -65,7 +65,7 @@ func VerifyHostPort(netProto string, addr string) (verifiedAddr string, err erro
 	return addr, nil
 }
 
-// Get a unique port TCP
+// GetUniqueTCP gets a unique port TCP
 func GetUniqueTCP() (port int, err error) {
 	ln, err := newListenerTCP(0)
 	if err != nil {
@@ -81,7 +81,7 @@ func GetUniqueTCP() (port int, err error) {
 	return port, nil
 }
 
-// Get a unique port UDP
+// GetUniqueUDP gets a unique port UDP
 func GetUniqueUDP() (port int, err error) {
 	ln, err := newListenerUDP(0)
 	if err != nil {
@@ -97,7 +97,7 @@ func GetUniqueUDP() (port int, err error) {
 	return port, nil
 }
 
-// Get a unique port on "udp" or "tcp"
+// GetUnique gets a unique port on "udp" or "tcp"
 func GetUnique(netProto string) (port int, err error) {
 	switch netProto {
 	case udp:
@@ -115,7 +115,7 @@ func GetUnique(netProto string) (port int, err error) {
 	return port, nil
 }
 
-// Helper function to quickly get the port from an addr string
+// GetPortFromAddr is a helper function to quickly get the port from an addr string
 func GetPortFromAddr(addr string) (port int, err error) {
 	_, portStr, err := net.SplitHostPort(addr)
 	if err != nil {
@@ -130,10 +130,20 @@ func GetPortFromAddr(addr string) (port int, err error) {
 	return port, nil
 }
 
-// Wrapper function for net.JoinHostPort to easily
+// JoinHostPort wrapper function for net.JoinHostPort to easily
 // pass port as an int instead of a string
 func JoinHostPort(host string, port int) string {
 	return net.JoinHostPort(host, strconv.Itoa(port))
+}
+
+// ReplacePortInAddr takes an address string and replaces the port
+func ReplacePortInAddr(addr, newPort string) (string, error) {
+	host, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return "", err
+	}
+
+	return net.JoinHostPort(host, newPort), nil
 }
 
 // Helper function to create a new UDP Listener
