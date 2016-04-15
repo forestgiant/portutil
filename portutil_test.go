@@ -240,6 +240,28 @@ func TestGetPortFromAddr(t *testing.T) {
 	}
 }
 
+func TestReplacePortInAddr(t *testing.T) {
+	tests := []struct {
+		address string
+		newPort string
+		pass    bool
+	}{
+		{"127.0.0.1:9080", "8080", true},
+		{"127.0.0.1:9080", ":8080", false},
+		{":9080", "8080", false},
+		{"", "", false},
+		{"):*", "8000", false},
+	}
+	for _, test := range tests {
+		newAddress, err := ReplacePortInAddr(test.address, test.newPort)
+		if err != nil || newAddress == "" {
+			if test.pass {
+				t.Fatalf("%s: Err getting unique port: %s", test.address, err)
+			}
+		}
+	}
+}
+
 // openAllTCPPorts tries to open all tcp ports on your computer
 // and returns a slice of net.Listeners so you can close
 func openAllTCPPorts() []net.Listener {
