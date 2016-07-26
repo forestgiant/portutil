@@ -58,7 +58,7 @@ func TestVerify(t *testing.T) {
 	for _, test := range tests {
 		port, err := Verify(test.netProto, testPort)
 		if err != nil {
-			t.Errorf("Couldn't Verify port on UDP: %s. Error: %s", port, err)
+			t.Errorf("Couldn't Verify port on UDP: %d. Error: %s", port, err)
 			return
 		}
 
@@ -100,7 +100,7 @@ func TestVerifyHostPort(t *testing.T) {
 			}
 
 			if addr != test.address {
-				t.Errorf("testPort: %s should equal port: %d", test.address, addr)
+				t.Errorf("testPort: %s should equal port: %s", test.address, addr)
 				return
 			}
 		} else {
@@ -133,7 +133,7 @@ func TestGetUnique(t *testing.T) {
 
 	// test GetUnique
 	for _, test := range tests {
-		port, err := GetUnique(test.netProto)
+		port, err = GetUnique(test.netProto)
 		if err != nil || port == 0 {
 			t.Fatalf("%s: Err getting unique port: %s", test.netProto, err)
 		}
@@ -142,12 +142,12 @@ func TestGetUnique(t *testing.T) {
 	// open up all ports
 	listeners := openAllTCPPorts()
 
-	port, err = GetUniqueTCP()
+	_, err = GetUniqueTCP()
 	if err == nil {
 		t.Fatalf("All ports should be closed: %s", err)
 	}
 
-	port, err = GetUniqueUDP()
+	_, err = GetUniqueUDP()
 	if err == nil {
 		t.Fatalf("All ports should be closed: %s", err)
 	}
@@ -267,12 +267,14 @@ func TestReplacePortInAddr(t *testing.T) {
 func openAllTCPPorts() []net.Listener {
 	var listeners []net.Listener
 	listMutex := new(sync.Mutex)
-	stopChan := make(chan bool)
+	waitChan := make(chan struct{})
+	shutdownChan := make(chan struct{})
 
 	openPorts := func() {
 		ln, err := newListenerTCP(0)
 		if err != nil {
-			stopChan <- true
+			close(waitChan)
+			close(shutdownChan)
 			return
 		}
 
@@ -284,10 +286,15 @@ func openAllTCPPorts() []net.Listener {
 
 	go func() {
 		for {
-			go openPorts()
+			select {
+			default:
+				openPorts()
+			case <-shutdownChan:
+				return
+			}
 		}
 	}()
-	<-stopChan
+	<-waitChan
 
 	return listeners
 }
